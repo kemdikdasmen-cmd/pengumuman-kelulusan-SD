@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekolah Dasar Negeri Angkatan 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f2d74e;
+            opacity: 0;
+            z-index: 50;
+        }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* Print Styles */
+        @media print {
+            @page {
+                size: 330mm 215mm; /* F4 / Folio Landscape */
+                margin: 0mm;
+            }
+            body * {
+                visibility: hidden;
+            }
+            body {
+                background-color: white;
+            }
+            #resultBox, #resultBox * {
+                visibility: visible;
+            }
+            #resultBox {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) !important;
+                width: 330mm !important;
+                height: 215mm !important;
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 10mm;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            /* Menghilangkan penskalaan layar saat cetak */
+            .cert-scale-wrapper {
+                transform: none !important;
+                width: 100% !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print, button, .confetti {
+                display: none !important;
+            }
+            /* Memastikan warna background sertifikat ikut tercetak */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+
+        /* Border Klasik Sertifikat Biru-Putih */
+        .cert-outer-border {
+            border: 14px solid #1e3a8a; /* Navy Blue */
+            padding: 6px;
+            background-color: #ffffff;
+            position: relative;
+        }
+        .cert-inner-border {
+            border: 3px double #3b82f6; /* Blue-500 */
+            padding: 24px 20px;
+            @media (min-width: 640px) {
+                padding: 32px 40px;
+            }
+            position: relative;
+        }
+        
+        /* Ornamen Sudut Sertifikat */
+        .corner-ornament {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-color: #1e3a8a;
+            z-index: 20;
+        }
+        .corner-tl { top: 8px; left: 8px; border-top: 5px solid; border-left: 5px solid; }
+        .corner-tr { top: 8px; right: 8px; border-top: 5px solid; border-right: 5px solid; }
+        .corner-bl { bottom: 8px; left: 8px; border-bottom: 5px solid; border-left: 5px solid; }
+        .corner-br { bottom: 8px; right: 8px; border-bottom: 5px solid; border-right: 5px solid; }
+
+        /* Responsivitas Layar HP: Membungkus Sertifikat agar fit lebar HP */
+        .cert-scale-wrapper {
+            transform-origin: top left;
+            transition: transform 0.1s ease, margin 0.1s ease;
+        }
+    </style>
+</head>
+<body class="bg-blue-50 min-h-screen font-sans text-gray-800">
+
+    <!-- Header / Hero Section -->
+    <header class="bg-blue-700 text-white relative overflow-hidden bg-pattern">
+        <div class="container mx-auto px-4 py-8 md:py-12 relative z-10 text-center">
+            <div class="inline-block p-2.5 bg-white rounded-full mb-3 shadow-lg">
+                <!-- Academic Cap Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-10 md:w-10 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                </svg>
+            </div>
+            <!-- Menambahkan teks di atas nama sekolah -->
+            <p class="text-sm md:text-lg font-bold uppercase tracking-widest text-blue-200 mb-1">Pengumuman Kelulusan</p>
+            <h1 class="text-2xl md:text-5xl font-bold mb-2 tracking-tight">Sekolah Dasar Negeri Angkatan 2026</h1>
+            <p class="mt-2 max-w-2xl mx-auto text-blue-100 text-xs md:text-base px-2">
+                Selamat datang! Silakan masukkan NISN (Nomor Induk Siswa Nasional) putra/putri Anda untuk melihat hasil kelulusan.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6 md:py-8 -mt-6 md:-mt-8 relative z-20">
+        
+        <!-- Search Box Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-5 md:p-10 max-w-2xl mx-auto animate-fade-in border border-gray-100">
+            <h3 class="text-lg md:text-xl font-bold text-center mb-5 text-gray-800">Cek Status Kelulusan</h3>
+            
+            <form id="searchForm" class="space-y-4">
+                <div>
+                    <label for="nisn" class="block text-sm font-medium text-gray-700 mb-1">Masukkan NISN</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input type="number" id="nisn" name="nisn" required placeholder="Contoh: 131540846" 
+                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base md:text-lg transition duration-150">
+                    </div>
+                    <p class="text-[11px] md:text-xs text-gray-500 mt-1.5">Gunakan angka saja, tanpa spasi atau tanda baca.</p>
+                </div>
+                <button type="submit" id="submitBtn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base md:text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150">
+                    <span>Lihat Hasil</span>
+                </button>
+            </form>
+
+            <!-- Loading Indicator (Hidden) -->
+            <div id="loading" class="hidden mt-8 text-center">
+                <svg class="animate-spin h-8 w-8 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">Mencari data...</p>
+            </div>
+
+            <!-- Result Box (Hidden) -->
+            <div id="resultBox" class="hidden mt-6 animate-fade-in pt-2">
+                <!-- Content will be injected by JS -->
+            </div>
+        </div>
+
+        <!-- Info & Announcement Section -->
+        <div class="mt-8 md:mt-12 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in" style="animation-delay: 0.2s;">
+            <!-- Info Card -->
+            <div class="bg-white rounded-xl shadow-md p-5 md:p-6 border-l-4 border-yellow-400">
+                <div class="flex items-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="text-base md:text-lg font-bold text-gray-800">Informasi Penting</h3>
+                </div>
+                <ul class="space-y-2 text-xs md:text-sm text-gray-600">
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-1.5">•</span>
+                        <span><strong>Pengambilan SKL:</strong> Jadwal akan diinformasikan kemudian melalui grup WhatsApp Paguyuban Orang Tua.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-1.5">•</span>
+                        <span><strong>Cap Tiga Jari Ijazah:</strong> Jadwal akan diinformasikan kemudian melalui grup WhatsApp Paguyuban Orang Tua.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-1.5">•</span>
+                        <span>Dilarang melakukan konvoi atau corat-coret seragam sekolah.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Message Card -->
+            <div class="bg-blue-600 rounded-xl shadow-md p-5 md:p-6 text-white relative overflow-hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="absolute -bottom-4 -right-4 h-24 w-24 md:h-32 md:w-32 text-blue-500 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                </svg>
+                <h3 class="text-base md:text-lg font-bold mb-2 relative z-10">Pesan dari Wali Kelas</h3>
+                <p class="text-xs md:text-sm text-blue-100 leading-relaxed italic relative z-10">
+                    "Anak-anakku tersayang, enam tahun kita mengukir cerita di sekolah ini. Lulus bukan berarti selesai belajar, melainkan awal dari petualangan baru menuju jenjang SMP. Teruslah bermimpi tinggi dan jadilah kebanggaan orang tua. Doa Bapak/Ibu guru selalu menyertai langkah kalian."
+                </p>
+                <p class="mt-3 text-xs md:text-sm font-semibold relative z-10">- Dewan Guru Kelas 6</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 bg-gray-800 text-gray-400 py-6 text-center text-xs md:text-sm">
+        <p>&copy; 2026. Dibuat dengan bangga oleh Tim IT Sekolah.</p>
+    </footer>
+
+    <!-- Javascript Logic -->
+    <script>
+        // --- DATABASE SISWA (LENGKAP 43 SISWA) ---
+        // Diambil langsung secara utuh dari file spreadsheet Excel/CSV SDN Sidomulyo
+        const csvData = `Nomor,Nama,NIS,Jenis Kelamin,NISN,Tempat lahir,tanggal lahir,Nama Ayah,Nama Ibu,Status
+1,ABDUL RAZZAQ AL GHANNIY,2732,L,131540846,kediri,2013-02-08,RAFI'UD AJI SAPUTRO,DENNIS ISSABELLA PREDAYANA,LULUS
+2,ADIIBA ZAKIYYA FIRDAUS,2711,P,135696560,Kediri,2013-05-05,Hari Susilo,Ernawati,LULUS
+3,AHMAD MUZAKKI RAMADHAN AWWABIN,2712,L,131809925,kediri,2013-08-05,SAIFUDIN,SITI NURHAYATI,LULUS
+4,AHNAF FARIZHUL DAFFA,2733,L,138662475,KEDIRI,2013-12-17,ARIS,MAHARANI ANINGRUM,TIDAK LULUS
+5,AL AZKA MARK HISAM,2863,L,3142354883,Jakarta,2014-03-11,HENRY DWI HARTANTO,ADE MEI PRAMITA,LULUS
+6,ALDO DANUAR RIZKY,2713,L,139530208,Kediri,2013-01-15,SUTRISNO,WINARTI,TIDAK LULUS
+7,ANIZA AZWA INDANA ZULFA,2714,P,136979601,KEDIRI,2013-06-25,MUHAMMAD KHOLIQ,KUSNUL KOTIMAH,LULUS
+8,ARVA SESTIAWAN,2715,L,133618454,Kediri,2013-09-06,SUTRISNO,SITI ROFI'AH,LULUS
+9,ASEP SETIAWAN,2716,L,138133342,kediri,2013-09-06,SUTRISNO,SITI ROFI'AH,LULUS
+10,ASYILA BILQIS NUR FAUZIYAH,2717,P,131853610,KEDIRI,2013-11-20,AHMAD FAUZI,SITI MASLIHAH,LULUS
+11,CHIKAL ADITYA RAMADHAN,2718,L,131557999,Kediri,2013-07-28,HERI SASMITO,NURUL SITI KHOTIMAH,LULUS
+12,CHIKO JAVIER ARDIANSYAH,2719,L,131518290,Kediri,2013-10-24,EDI ARDIANSYAH,SULISTIANI,LULUS
+13,DAFFA RIZKY AL-HABSYI,2720,L,138385078,KEDIRI,2013-07-29,MUHAMMAD ARIS SUTIKNO,NINING RETNOWATI,LULUS
+14,DANISH ADITYA PRATAMA,2721,L,131464673,KEDIRI,2013-08-16,SUYATNO,YENI PUSPITASARI,LULUS
+15,FACHRI AHMAD RAMADHAN,2722,L,131463134,KEDIRI,2013-07-27,EDI SUTRISNO,ERNAWATI,LULUS
+16,FADILA NUR ANNISA,2723,P,142797746,KEDIRI,2014-01-08,SUTIONO,RIRIN PURWANTI,LULUS
+17,FALISHA CALYA SHAFANA,2724,P,132223830,KEDIRI,2013-10-18,SUPRIANTO,HERA PURWATI,LULUS
+18,FARA AMELIA KHOIRUN NISA',2725,P,132439169,KEDIRI,2013-09-17,YULI PRASTYO,SITI KHOTIMAH,LULUS
+19,FIRA LUKY NUR JANNNAH,2726,P,138407481,KEDIRI,2013-10-14,RUDI SISWANTO,SITI MU'AROFATUN,LULUS
+20,HESTIN DWI CAHYANTI,2727,P,131972881,KEDIRI,2013-10-27,YUDI ARIANTO,WIWIK SETIOWATI,LULUS
+21,JESICA TRI LESTARI,2728,P,135540320,KEDIRI,2013-03-24,SUTEJO,SITI AMINAH,LULUS
+22,KANAYA PUTRI ARDIANSYAH,2729,P,137351502,KEDIRI,2013-11-20,DEDI ARDIANSYAH,PUPUT DWI LESTARI,LULUS
+23,KEYSHA BILQIS NUR FAUZIYAH,2730,P,131853613,KEDIRI,2013-11-20,AHMAD FAUZI,SITI MASLIHAH,LULUS
+24,LULUK MAR'ATUS SHOLIKAH,2731,P,135696541,KEDIRI,2013-11-13,MARSUDI,SUMIATI,LULUS
+25,MAYLA REVA ARDIANTI,2745,P,139985223,Kediri,2013-05-10,HERI ARDIANTO,SUCIATI,LULUS
+26,MUHAMMAD ARYA PRATAMA,2746,L,132929294,kediri,2013-09-25,ALI MUSAFAK,CHORIDAH,LULUS
+27,AULIA KHIKMATUL MAULA,2736,P,148820425,kediri,2014-02-19,MOCHAMAD TOHA,ANIS SUKANTI,LULUS
+28,AURA BUNGA SOUMY,2737,P,139616473,kediri,2013-07-22,DAMIRI,RATNA ARMYA KARTIKA SARI,LULUS
+29,IBRAHIM AZKA ALFARIEL,2739,L,132127262,kediri,2013-04-29,INGGA WIRDATAMA,NURAINI,LULUS
+30,M . ZAKARIA NAILUN NABHAN,2743,L,133757226,KEDIRI,2013-06-10,MOH NUR QOYUM,SOVIA PRIMADEWI,LULUS
+31,M. FAUZI AL RASYID,2741,L,3131379302,KEDIRI,2013-09-28,SURONO,YULIANING,LULUS
+32,MARISA VIRA RAMADANI,2744,P,3130211786,JAYAPURA,2013-07-13,ARI BAMBANG SISWANTORO,YESI NUR RAHMA WATI,LULUS
+33,MOCHAMMAD ALDI SAPUTRA,2742,L,139530206,Kediri,2013-08-16,SUTRISNO,WINARTI,LULUS
+34,MUCHAMAD RADITYA SAPUTRA,2747,L,131558000,KEDIRI,2013-10-21,YOYOK SUPRIANTO,ANIS SUPARTIN,LULUS
+35,NADA NUR AGUSTIN,2748,P,131557997,KEDIRI,2013-08-25,SUYONO,WIDIASTUTIK,LULUS
+36,NADIYA PUTRI AGUSTIN,2749,P,131557998,KEDIRI,2013-08-25,SUYONO,WIDIASTUTIK,LULUS
+37,REVALINA MELLA SARI,2750,P,131809923,KEDIRI,2013-10-09,EKO HERI PRANOTO,NANIK INDAYATI,LULUS
+38,RIAN ARDIANSAH,2751,L,138676644,KEDIRI,2013-12-07,GITO ARDIANSAH,PUPUT DWI LESTARI,LULUS
+39,SALSA AULIA NUR AZIZAH,2752,P,131464670,KEDIRI,2013-11-23,AHMAD FAUZI,SITI MASLIHAH,LULUS
+40,SATRIA WIJAYA,2753,L,131853612,KEDIRI,2013-10-10,YUDI ARIANTO,WIWIK SETIOWATI,LULUS
+41,SISKA ARYANTI,2754,P,132514881,KEDIRI,2013-10-22,SUYATNO,YENI PUSPITASARI,LULUS
+42,ZASKIA CHANDRA KARTIKA,2755,P,131463133,KEDIRI,2013-07-27,EDI SUTRISNO,ERNAWATI,LULUS
+43,ZIDAN AHMAD RAMADHAN,2756,L,131463135,KEDIRI,2013-07-27,EDI SUTRISNO,ERNAWATI,TIDAK LULUS`;
+
+        // Parse CSV to Search Database object
+        const dataSiswa = {};
+        const baris = csvData.trim().split('\n');
+        
+        for (let i = 1; i < baris.length; i++) {
+            const kolom = baris[i].split(',');
+            if (kolom.length >= 9) {
+                let nama = kolom[1].trim();
+                let nisn = kolom[4].trim();
+                let tempatLahir = kolom[5].trim();
+                let tanggalLahir = kolom[6].trim();
+                let namaAyah = kolom[7].trim();
+                let namaIbu = kolom[8].trim();
+                let status = kolom[9] ? kolom[9].trim().toUpperCase() : "LULUS";
+                
+                nisn = nisn.replace(/[^0-9]/g, ''); 
+                
+                if (nisn) {
+                    dataSiswa[nisn] = {
+                        nama: nama,
+                        tempatLahir: tempatLahir,
+                        tanggalLahir: tanggalLahir,
+                        namaAyah: namaAyah,
+                        namaIbu: namaIbu,
+                        status: status
+                    };
+                }
+            }
+        }
+
+        // Format Date Helper
+        function formatTanggalIndo(tgl) {
+            if(!tgl) return '';
+            const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const parts = tgl.split('-');
+            if(parts.length === 3) {
+                return `${parseInt(parts[2], 10)} ${bulan[parseInt(parts[1], 10)-1]} ${parts[0]}`;
+            }
+            return tgl;
+        }
+
+        // Dynamic Resize Logic to Scale the Certificate inside Mobile Views
+        function adjustCertificateScale() {
+            const container = document.getElementById('certContainer');
+            const wrapper = document.getElementById('certScaleWrapper');
+            if (!container || !wrapper) return;
+
+            // Reset styles dulu agar perhitungan scrollHeight/offsetHeight akurat
+            container.style.height = 'auto';
+            wrapper.style.transform = 'none';
+            wrapper.style.width = '1000px'; 
+            wrapper.style.marginLeft = '0px';
+
+            const containerWidth = container.clientWidth;
+            const originalWidth = 1000; // Lebar asli desain landscape sertifikat
+
+            if (containerWidth < originalWidth) {
+                const scale = containerWidth / originalWidth;
+                wrapper.style.transformOrigin = 'top left';
+                wrapper.style.transform = `scale(${scale})`;
+                
+                // Menghitung margin sisa agar sertifikat tetap berada di tengah layar gawai
+                const leftOffset = (containerWidth - (originalWidth * scale)) / 2;
+                wrapper.style.marginLeft = `${leftOffset}px`;
+                
+                // Menentukan tinggi dinamis container pembungkus secara presisi agar bagian bawah (NIP & Tanda tangan) tidak terpotong
+                const actualHeight = wrapper.offsetHeight || wrapper.scrollHeight;
+                container.style.height = `${actualHeight * scale}px`;
+            } else {
+                wrapper.style.transform = 'none';
+                wrapper.style.width = '1000px';
+                wrapper.style.marginLeft = 'auto';
+                wrapper.style.marginRight = 'auto';
+                container.style.height = 'auto';
+            }
+        }
+
+        // Watch layout resizes for responsive scale
+        window.addEventListener('resize', adjustCertificateScale);
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nisnInput = document.getElementById('nisn').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const resultBox = document.getElementById('resultBox');
+            
+            resultBox.classList.add('hidden');
+            loading.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70');
+
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70');
+                
+                if(nisnInput.length < 5) {
+                     showErrorResult(nisnInput, "NISN terlalu pendek. Silakan periksa kembali.");
+                } else if(dataSiswa[nisnInput]) {
+                    const siswa = dataSiswa[nisnInput];
+                    
+                    // Render sertifikat (tampilan disamakan persis, hanya beda teks LULUS / TIDAK LULUS)
+                    showSuccessResult(nisnInput, siswa);
+                    setTimeout(adjustCertificateScale, 100);
+
+                    // Efek confetti selebrasi hanya untuk yang LULUS
+                    if (siswa.status === "LULUS") {
+                        createConfetti();
+                    }
+                } else {
+                    showErrorResult(nisnInput, "Maaf, data siswa dengan NISN tersebut tidak ditemukan. Pastikan NISN yang dimasukkan sudah benar sesuai ijazah/rapor.");
+                }
+                
+            }, 1000);
+        });
+
+        function showSuccessResult(nisn, siswa) {
+            const resultBox = document.getElementById('resultBox');
+            const tglLahirFormatted = formatTanggalIndo(siswa.tanggalLahir);
+
+            // Deteksi Status Siswa
+            const isLulus = siswa.status === "LULUS";
+            const statusText = isLulus ? "LULUS" : "TIDAK LULUS";
+            
+            // Pengkondisian Warna Desain Status (Hijau untuk Lulus, Merah untuk Tidak Lulus)
+            const statusBgColor = isLulus ? "bg-green-600 border-green-600" : "bg-red-600 border-red-600";
+            const statusTextColor = isLulus ? "text-green-700 border-green-700" : "text-red-700 border-red-700";
+
+            resultBox.innerHTML = `
+                <!-- Certificate Outer Container (Supports scrolling & scale scaling on touch screen) -->
+                <div id="certContainer" class="w-full overflow-hidden transition-all duration-300 pb-8">
+                    
+                    <!-- Scalable Wrapper (Scales elements down dynamically on smaller viewports) -->
+                    <div id="certScaleWrapper" class="cert-scale-wrapper mx-auto">
+                        
+                        <!-- Certificate Box (Perfect 1000px wide for layout balance) -->
+                        <div class="bg-gradient-to-br from-[#ffffff] via-[#f7faff] to-[#edf4ff] cert-outer-border rounded-sm p-2 text-center relative shadow-2xl mx-auto text-gray-800 font-serif" style="width: 1000px; min-height: 650px;">
+                            
+                            <!-- Ornamen Sudut -->
+                            <div class="corner-ornament corner-tl"></div>
+                            <div class="corner-ornament corner-tr"></div>
+                            <div class="corner-ornament corner-bl"></div>
+                            <div class="corner-ornament corner-br"></div>
+
+                            <!-- Inner Border Ganda -->
+                            <div class="cert-inner-border">
+                                
+                                <!-- Watermark Teks Alternatif (Menyesuaikan Status Lulus/Tidak) -->
+                                <div class="absolute inset-0 opacity-[0.02] flex items-center justify-center pointer-events-none select-none">
+                                    <span class="text-[120px] font-extrabold uppercase tracking-widest text-blue-900 rotate-[-15deg]">${statusText}</span>
+                                </div>
+
+                                <div class="relative z-10">
+                                    <!-- KOP Kementerian Resmi -->
+                                    <div class="flex flex-col items-center justify-center mb-6 border-b-[3px] border-blue-900 pb-5">
+                                        <div class="text-center">
+                                            <h3 class="text-2xl font-extrabold uppercase tracking-wider text-blue-900 leading-tight">Kementerian Pendidikan Dasar dan Menengah</h3>
+                                            <h4 class="text-lg font-bold uppercase tracking-widest text-blue-800 mt-1">Republik Indonesia</h4>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Judul Sertifikat -->
+                                    <div class="mb-6">
+                                        <h1 class="text-4xl font-extrabold uppercase tracking-[0.15em] text-blue-900 mb-1" style="font-family: 'Georgia', 'Times New Roman', serif;">Sertifikat Kelulusan</h1>
+                                        <p class="text-base font-bold text-blue-800 uppercase tracking-widest">Nomor: 421.2/001/SD-SM/2026</p>
+                                    </div>
+                                    
+                                    <!-- Teks Pembuka -->
+                                    <p class="text-lg mb-4 italic text-gray-600">Diberikan dengan penuh rasa bangga kepada:</p>
+                                    
+                                    <!-- Box Data Siswa (Biru-Putih) -->
+                                    <div class="text-left w-full max-w-2xl mx-auto mb-6 text-lg bg-white/75 backdrop-blur-sm border border-blue-100 p-5 rounded-lg shadow-sm">
+                                        <table class="w-full">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="py-1.5 w-2/5 text-blue-900 font-semibold tracking-wide">Nama Lengkap</td>
+                                                    <td class="py-1.5 w-8 text-center text-blue-800">:</td>
+                                                    <td class="py-1.5 font-extrabold uppercase text-xl text-blue-950 border-b border-blue-100">${siswa.nama}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-1.5 text-blue-900 font-semibold tracking-wide">Nomor Induk Siswa Nasional</td>
+                                                    <td class="py-1.5 w-8 text-center text-blue-800">:</td>
+                                                    <td class="py-1.5 font-bold text-gray-800">${nisn}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-1.5 text-blue-900 font-semibold tracking-wide">Tempat, Tanggal Lahir</td>
+                                                    <td class="py-1.5 w-8 text-center text-blue-800">:</td>
+                                                    <td class="py-1.5 font-bold text-gray-800 uppercase">${siswa.tempatLahir}, ${tglLahirFormatted}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-1.5 text-blue-900 font-semibold tracking-wide">Nama Orang Tua (Ayah / Ibu)</td>
+                                                    <td class="py-1.5 w-8 text-center text-blue-800">:</td>
+                                                    <td class="py-1.5 font-bold text-gray-800 uppercase">${siswa.namaAyah} / ${siswa.namaIbu}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <!-- Teks Penutup (Disesuaikan berdasarkan status kelulusan) -->
+                                    <p class="text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-gray-700">
+                                        Telah menyelesaikan seluruh program pembelajaran dan dinyatakan 
+                                        <span class="font-extrabold text-xl ${statusTextColor} border-b-2 ${statusTextColor} px-2 uppercase mx-1">
+                                            ${statusText}
+                                        </span> 
+                                        dari jenjang Sekolah Dasar (SD) di <strong>SD Negeri Sidomulyo</strong> pada Tahun Ajaran 2025/2026.
+                                    </p>
+                                    
+                                    <!-- Kolom Tanda Tangan -->
+                                    <div class="grid grid-cols-3 gap-4 items-end mt-8 px-6">
+                                        
+                                        <!-- Kiri: Menteri (QR Code TTD Elektronik) -->
+                                        <div class="flex flex-col items-center justify-end text-center">
+                                            <p class="text-base font-bold text-blue-900 leading-tight">Menteri Pendidikan Dasar<br>dan Menengah RI</p>
+                                            
+                                            <!-- QR Code Box Menteri -->
+                                            <div class="my-4 p-2 bg-white border border-blue-200 rounded-lg shadow-sm flex flex-col items-center">
+                                                <!-- SVG Vector QR Code -->
+                                                <svg class="w-20 h-20 text-blue-900" viewBox="0 0 29 29" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square">
+                                                    <!-- Finder Pattern Top-Left -->
+                                                    <path d="M1 1h7v7H1V1zm1 1v5h5V2H2zm1 1h3v3H3V3z" fill="currentColor"/>
+                                                    <!-- Finder Pattern Top-Right -->
+                                                    <path d="M21 1h7v7h-7V1zm1 1v5h5V2h-5zm1 1h3v3h-3V3z" fill="currentColor"/>
+                                                    <!-- Finder Pattern Bottom-Left -->
+                                                    <path d="M1 21h7v7H1v-7zm1 1v5h5v-5H2zm1 1h3v3H3v-3z" fill="currentColor"/>
+                                                    <!-- Alignment Pattern -->
+                                                    <path d="M21 21h3v3h-3v-3z" fill="currentColor"/>
+                                                    <!-- Timing Patterns -->
+                                                    <path d="M8 3h13M3 8v13" stroke-dasharray="1,1" stroke-width="1"/>
+                                                    <!-- Random QR Code Data Pixels Simulation -->
+                                                    <rect x="10" y="10" width="2" height="2" fill="currentColor"/>
+                                                    <rect x="14" y="10" width="3" height="1" fill="currentColor"/>
+                                                    <rect x="11" y="13" width="1" height="3" fill="currentColor"/>
+                                                    <rect x="15" y="12" width="2" height="2" fill="currentColor"/>
+                                                    <rect x="13" y="16" width="3" height="1" fill="currentColor"/>
+                                                    <rect x="10" y="18" width="1" height="2" fill="currentColor"/>
+                                                    <rect x="18" y="10" width="2" height="4" fill="currentColor"/>
+                                                    <rect x="18" y="15" width="1" height="2" fill="currentColor"/>
+                                                    <rect x="15" y="18" width="3" height="2" fill="currentColor"/>
+                                                    <!-- Bottom Right Data -->
+                                                    <rect x="25" y="10" width="2" height="2" fill="currentColor"/>
+                                                    <rect x="25" y="14" width="1" height="3" fill="currentColor"/>
+                                                    <rect x="10" y="25" width="4" height="2" fill="currentColor"/>
+                                                    <rect x="15" y="24" width="2" height="2" fill="currentColor"/>
+                                                    <rect x="25" y="25" width="3" height="2" fill="currentColor"/>
+                                                </svg>
+                                                <span class="text-[9px] font-sans font-semibold tracking-wider text-blue-700 uppercase mt-1.5 select-none whitespace-nowrap">Verifikasi Kemendikdasmen</span>
+                                            </div>
+
+                                            <p class="font-extrabold text-base text-gray-900 underline tracking-wide whitespace-nowrap">Prof. Dr. Abdul Mu'ti, M.Ed.</p>
+                                        </div>
+                                        
+                                        <!-- Tengah: Stempel / Medali Resmi -->
+                                        <div class="flex justify-center pb-2">
+                                            <div class="w-32 h-32 border-4 border-yellow-500 rounded-full flex items-center justify-center relative bg-gradient-to-br from-blue-900 to-blue-950 shadow-xl">
+                                                <!-- Inner Ring Dashed -->
+                                                <div class="absolute w-[112px] h-[112px] border-2 border-dashed border-yellow-400/40 rounded-full"></div>
+                                                <div class="z-10 text-center px-2 flex flex-col justify-center items-center h-full">
+                                                    <!-- Label Utama (Teks Putih dengan Drop Shadow) -->
+                                                    <span class="text-white font-black text-[11px] leading-tight uppercase tracking-wider drop-shadow-[0_2px_2px_rgba(0,0,0,1)]">
+                                                        KEMENDIKDASMEN
+                                                    </span>
+                                                    <!-- Sub Label (Kuning Emas Terang) -->
+                                                    <span class="text-yellow-400 font-black text-[10px] mt-1 tracking-widest uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                                                        ★ RESMI ★
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Kanan: Kepala Sekolah (QR Code TTD Elektronik) -->
+                                        <div class="flex flex-col items-center justify-end text-center">
+                                            <p class="text-base text-gray-700 mb-0.5 font-semibold">Jakarta, 02 Juni 2026</p>
+                                            <p class="text-base font-bold text-blue-900 leading-tight">Kepala Sekolah<br>SD Negeri Sidomulyo</p>
+                                            
+                                            <!-- QR Code Box Kepala Sekolah -->
+                                            <div class="my-4 p-2 bg-white border border-blue-200 rounded-lg shadow-sm flex flex-col items-center">
+                                                <!-- SVG Vector QR Code -->
+                                                <svg class="w-20 h-20 text-blue-900" viewBox="0 0 29 29" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square">
+                                                    <!-- Finder Pattern Top-Left -->
+                                                    <path d="M1 1h7v7H1V1zm1 1v5h5V2H2zm1 1h3v3H3V3z" fill="currentColor"/>
+                                                    <!-- Finder Pattern Top-Right -->
+                                                    <path d="M21 1h7v7h-7V1zm1 1v5h5V2h-5zm1 1h3v3h-3V3z" fill="currentColor"/>
+                                                    <!-- Finder Pattern Bottom-Left -->
+                                                    <path d="M1 21h7v7H1v-7zm1 1v5h5v-5H2zm1 1h3v3H3v-3z" fill="currentColor"/>
+                                                    <!-- Alignment Pattern -->
+                                                    <path d="M21 21h3v3h-3v-3z" fill="currentColor"/>
+                                                    <!-- Timing Patterns -->
+                                                    <path d="M8 3h13M3 8v13" stroke-dasharray="1,1" stroke-width="1"/>
+                                                    <!-- Different Simulated QR Data Pixels for variety -->
+                                                    <rect x="11" y="11" width="3" height="1" fill="currentColor"/>
+                                                    <rect x="10" y="14" width="2" height="2" fill="currentColor"/>
+                                                    <rect x="15" y="11" width="1" height="3" fill="currentColor"/>
+                                                    <rect x="13" y="15" width="2" height="1" fill="currentColor"/>
+                                                    <rect x="17" y="14" width="3" height="2" fill="currentColor"/>
+                                                    <rect x="11" y="18" width="2" height="2" fill="currentColor"/>
+                                                    <rect x="15" y="17" width="1" height="3" fill="currentColor"/>
+                                                    <!-- Bottom Right Data -->
+                                                    <rect x="25" y="11" width="2" height="1" fill="currentColor"/>
+                                                    <rect x="24" y="15" width="3" height="2" fill="currentColor"/>
+                                                    <rect x="10" y="24" width="2" height="2" fill="currentColor"/>
+                                                    <rect x="14" y="25" width="4" height="1" fill="currentColor"/>
+                                                    <rect x="24" y="24" width="2" height="3" fill="currentColor"/>
+                                                </svg>
+                                                <span class="text-[9px] font-sans font-semibold tracking-wider text-blue-700 uppercase mt-1.5 select-none whitespace-nowrap">Verifikasi SDN Sidomulyo</span>
+                                            </div>
+
+                                            <p class="font-extrabold text-base text-gray-900 underline tracking-wide whitespace-nowrap">WIGIH GUSWANTORO, S.Pd</p>
+                                            <p class="text-xs text-gray-600 mt-1 whitespace-nowrap">NIP. 19840815 201101 1 005</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultBox.classList.remove('hidden');
+        }
+
+        // Simple Confetti function
+        function createConfetti() {
+            const colors = ['#f2d74e', '#95c3de', '#ff9a91', '#4caf50'];
+            for (let i = 0; i < 70; i++) {
+                const confetto = document.createElement('div');
+                confetto.classList.add('confetti');
+                document.body.appendChild(confetto);
+
+                const left = Math.random() * 100 + 'vw';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetto.style.left = left;
+                confetto.style.backgroundColor = color;
+                confetto.style.top = '-10px';
+
+                const duration = Math.random() * 3 + 2; // 2-5s
+                
+                confetto.animate([
+                    { transform: `translate3d(0,0,0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate3d(${Math.random()*100 - 50}px, 100vh, 0) rotate(${Math.random()*360}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(.37,0,.63,1)'
+                });
+
+                // Cleanup
+                setTimeout(() => {
+                    confetto.remove();
+                }, duration * 1000);
+            }
+        }
+    </script>
+</body>
+</html>
